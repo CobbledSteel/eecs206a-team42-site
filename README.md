@@ -416,3 +416,46 @@ following AWS EC2 instances using on-demand pricing: `c5.4xlarge`
 and `f1.2xlarge` (Running FPGA-accelerated RTL simulations in FireSim.)
 Funding for purchasing components will be provided by grants through the
 ADEPT Lab.
+
+References
+============
+[1] L. K. Scheffer, “The physical design of biological systems-insights from
+the fly brain,” in Proceedings of the 2021 International Symposium on
+Physical Design, 2021, pp. 101–108.
+
+[2] A. Suleiman, Z. Zhang, L. Carlone, S. Karaman, and V. Sze, “Navion:
+A 2-mw fully integrated real-time visual-inertial odometry accelerator
+for autonomous navigation of nano drones,” IEEE Journal of Solid-State
+Circuits, vol. 54, no. 4, pp. 1106–1119, 2019.
+
+[3] J. L. Hennessy and D. A. Patterson, “A new golden age for computer
+architecture,” Communications of the ACM, vol. 62, no. 2, pp. 48–60,
+2019.
+
+[4] Z. Wan, B. Yu, T. Y. Li, J. Tang, Y. Zhu, Y. Wang, A. Raychowdhury,
+and S. Liu, “A survey of fpga-based robotic computing,” 2021.
+
+[5] R. Li, X. Huang, S. Tian, R. Hu, D. He, and Q. Gu, “Fpga-based
+design and implementation of real-time robot motion planning,” in 2019
+9th International Conference on Information Science and Technology
+(ICIST). IEEE, 2019, pp. 216–221.
+
+[6] B. Chr ́etien, A. Escande, and A. Kheddar, “Gpu robot motion planning
+using semi-infinite nonlinear programming,” IEEE Transactions on
+Parallel and Distributed Systems, vol. 27, no. 10, pp. 2926–2939, 2016.
+
+[7] J. Liang, V. Makoviychuk, A. Handa, N. Chentanez, M. Macklin, and
+D. Fox, “Gpu-accelerated robotic simulation for distributed reinforce-
+ment learning,” in Conference on Robot Learning. PMLR, 2018, pp.
+270–282.
+
+[8] S. Murray, W. Floyd-Jones, Y. Qi, G. Konidaris, and D. J. Sorin, “The
+microarchitecture of a real-time robot motion planning accelerator,” in
+2016 49th Annual IEEE/ACM International Symposium on Microarchi-
+tecture (MICRO). IEEE, 2016, pp. 1–12.
+
+[9] S. Lian, Y. Han, X. Chen, Y. Wang, and H. Xiao, “Dadu-p: A scalable
+accelerator for robot motion planning in a dynamic environment,” in
+2018 55th ACM/ESDA/IEEE Design Automation Conference (DAC).
+IEEE, 2018, pp. 1–6
+
