@@ -451,3 +451,67 @@ accelerator for robot motion planning in a dynamic environment,” in
 2018 55th ACM/ESDA/IEEE Design Automation Conference (DAC).
 IEEE, 2018, pp. 1–6
 
+[10] B. Boroujerdian, H. Genc, S. Krishnan, W. Cui, A. Faust, and V. Reddi,
+“Mavbench: Micro aerial vehicle benchmarking,” in 2018 51st Annual
+IEEE/ACM International Symposium on Microarchitecture (MICRO).
+IEEE, 2018, pp. 894–907.
+
+[11] J. Delmerico, T. Cieslewski, H. Rebecq, M. Faessler, and D. Scaramuzza,
+“Are we ready for autonomous drone racing? the uzh-fpv drone racing
+dataset,” in 2019 International Conference on Robotics and Automation
+(ICRA). IEEE, 2019, pp. 6713–6719.
+
+[12] R. Hadidi, B. Asgari, S. Jijina, A. Amyette, N. Shoghi, and
+H. Kim, “Quantifying the design-space tradeoffs in autonomous
+drones,” in Proceedings of the 26th ACM International Conference
+on Architectural Support for Programming Languages and Operating
+Systems, ser. ASPLOS 2021. New York, NY, USA: Association
+for Computing Machinery, 2021, p. 661–673. [Online]. Available:
+https://doi.org/10.1145/3445814.3446721
+
+[13] S. Shah, D. Dey, C. Lovett, and A. Kapoor, “Airsim: High-fidelity visual
+and physical simulation for autonomous vehicles,” in Field and service
+robotics. Springer, 2018, pp. 621–635.
+
+[14] S. Karandikar, H. Mao, D. Kim, D. Biancolin, A. Amid, D. Lee,
+N. Pemberton, E. Amaro, C. Schmidt, A. Chopra, Q. Huang, K. Kovacs,
+B. Nikolic, R. Katz, J. Bachrach, and K. Asanovic, “Firesim: Fpga-
+accelerated cycle-exact scale-out system simulation in the public cloud,”
+in 2018 ACM/IEEE 45th Annual International Symposium on Computer
+Architecture (ISCA), 2018, pp. 29–42.
+
+[15] K. Asanovic, R. Avizienis, J. Bachrach, S. Beamer, D. Biancolin,
+C. Celio, H. Cook, D. Dabbelt, J. Hauser, A. Izraelevitz et al., “The
+rocket chip generator,” EECS Department, University of California,
+Berkeley, Tech. Rep. UCB/EECS-2016-17, 2016.
+
+[16] J. Zhao, B. Korpan, A. Gonzalez, and K. Asanovic, “Sonicboom: The
+3rd generation berkeley out-of-order machine,” in Fourth Workshop on
+Computer Architecture Research with RISC-V, 2020.
+
+[17] H. Genc, S. Kim, A. Amid, A. Haj-Ali, V. Iyer, P. Prakash, J. Zhao,
+D. Grubb, H. Liew, H. Mao et al., “Gemmini: Enabling systematic deep-
+learning architecture evaluation via full-stack integration,” in Proceed-
+ings of the 58th Annual Design Automation Conference (DAC), 2021.
+
+[18] A. Amid, D. Biancolin, A. Gonzalez, D. Grubb, S. Karandikar, H. Liew,
+A. Magyar, H. Mao, A. Ou, N. Pemberton, P. Rigge, C. Schmidt,
+J. Wright, J. Zhao, Y. S. Shao, K. Asanovi ́c, and B. Nikoli ́c, “Chipyard:
+Integrated design, simulation, and implementation framework for custom
+socs,” IEEE Micro, vol. 40, no. 4, pp. 10–21, 2020.
+
+[19] “Dromajo,” 2021. [Online]. Available: https://github.com/chipsalliance/
+dromajo
+
+[20] M. Acevedo, “Fpga-based hardware-in-the-loop co-simulator platform
+for systemmodeler,” 2016.
+
+[21] K. Rozhdestvensky, V. Ryzhov, T. Fedorova, K. Safronov, N. Tryaskin,
+S. A. Sulaiman, M. Ovinis, and S. Hassan, “Description of the wolfram
+systemmodeler,” in Computer Modeling and Simulation of Dynamic
+Systems Using Wolfram SystemModeler. Springer, 2020, pp. 23–87.
+
+[22] S. Acharya, A. Bharadwaj, Y. Simmhan, A. Gopalan, P. Parag, and
+H. Tyagi, “Cornet: A co-simulation middleware for robot networks,”
+in 2020 International Conference on COMmunication Systems & NET-
+workS (COMSNETS). IEEE, 2020, pp. 245–251.
