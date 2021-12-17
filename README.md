@@ -1,0 +1,284 @@
+
+% \documentclass[conference]{ieeeconf}
+% \documentclass[onecolumn]{ieeetran}
+\documentclass[twocolumn]{ieeetran}
+
+
+\IEEEoverridecommandlockouts   
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage[colorlinks=true, urlcolor=blue, citecolor=black, linkcolor=black]{hyperref}
+\usepackage{xcolor}
+\usepackage{float, changepage}
+\usepackage{booktabs, physics}
+\usepackage{listings, multicol}
+\usepackage{multicol}
+\usepackage{minted}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    filecolor=black,      
+    urlcolor=blue,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+\usepackage{array}
+
+
+\begin{document}
+
+\title{\LARGE \bf
+A Co-Simulation Platform Enabling the Performance Characterization of Quadrotor SoCs 
+}
+
+\author{\IEEEauthorblockN{ 
+\textit{Final Project Proposal for EECS206A: Introduction to Robotics} \\ [1mm]
+Dima Nikiforov (SID: 3036245328, Email: \texttt{vnikiforov@berkeley.edu}) \\ 
+Chris Dong (SID: 3037258504, Email: \texttt{chrisdong@berkeley.edu}) \\ 
+University of California, Berkeley
+}}
+
+\maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
+
+% \begin{figure}[b]%   \centering
+%   \includegraphics[width=\linewidth]{simple_rnea_2.png}
+%   \caption{Flamegraph for baseline RNEA gradient computation based on Linux perf.}
+%   \label{fig:im2col}
+% \end{figure} 
+
+% \begin{multicols}{2}
+
+
+\begin{abstract}
+ As robotic systems grow in complexity and face tighter latency requirements, significant research efforts are being devoted to developing hardware accelerators for workloads that form bottlenecks in the robotics software pipeline. Heterogeneous systems implemented on application specific integrated chips (ASICs) have the potential to be highly performant platforms for executing robotics workloads. However, accurate pre-silicon performance evaluation of robotics System on Chips (SoCs) is not possible at a system level without infrastructure for the closed-loop co-simulation of digital logic (RTL) along with a simulated robotics environment. This makes developing ASICs for accelerating robotics systems risky and challenging. In this project we will develop infrastructure for co-simulating robotics ASICs in a closed-loop robotics environment, enabling the pre-silicon design space exploration of robotics SoCs. As a driving application we will explore autonomous aerial robotics, using physical drone hardware to act as a reference system for our simulation infrastructure.
+\end{abstract}
+
+%This is a single-paragraph summary of your project proposal. Think of this as your elevator pitch for your project. If you had 30 seconds to describe your project, what would you say?
+
+\section{Motivation}
+A fruit fly can compute workloads including trajectory planning, visual/inertial odometry (VIO), classification, and closed-loop control, all while only consuming 120 nW \cite{scheffer2021physical}. A state-of-the-art VIO ASIC consumes 2 mW \cite{suleiman2019navion}---over 10,000$\times$ more power. With such a stark difference, biology suggests vast optimization opportunities for autonomous systems. However, closing the gap becomes increasingly challenging; with the end of Moore's Law and Dennard Scaling, it is no longer feasible to rely on process technology improvements and general purpose processors (GPPs) to improve power efficiency and performance \cite{hennessy2019new}. As a result, over the past decade there has been a proliferation of academic research groups, startups, and industrial R\&D labs developing domain specific accelerators (DSAs) to eke out remaining performance improvements. Although DSAs can offer orders of magnitude improved performance over GPPs on isolated robotics benchmarks, factors such as diminishing returns of acceleration due to Amdahl's Law, poor functional unit utilization, contention over shared resources in heterogeneous systems, and unsupported computational kernels limit acceleration at a system-level. These issues are exacerbated in autonomous robotics systems, which face strict power, latency, and quality of service (QoS) constraints. These challenges present opportunities to improve robotics DSA performance by making use of hardware-software co-design techniques coupled with the full-stack evaluation of robotics SoC designs.
+
+ There are numerous projects using specialized hardware to accelerate a variety of robotics tasks \cite{fpgasurvey, li2019fpga, chretien2016gpu, liang2018gpu, murray2016microarchitecture, lian2018dadu, suleiman2019navion}. However, integrating and evaluating the performance of such hardware accelerators at a system level remains challenging. While the latency and throughput characteristics of robotics DSAs can be evaluated using data traces generated by model-based simulations, such methodologies to not capture system level feedback loops between hardware acceleration and robot behavior. For example, prior work has shown that in hardware-in-the-loop (HIL) setups, scaling clock frequency and allocating more compute units can directly impact quality-of-flight metrics in a quadrotor, such as flight velocity \cite{boroujerdian2018mavbench}. Conversely, higher velocity can negatively impact pose estimation accuracy \cite{delmerico2019we}, impacting trajectory planning and optimal control workloads which make use of iterative algorithms with variable runtimes. Therefore, a closed-loop test setup is needed for evaluating hardware accelerators for robotics. For designs implemented on programmable hardware such as GPUs and FPGAs, closed-loop evaluation is possible using hardware-in-the-loop (HIL) setups. However, this cannot be done with ASIC designs unless the chip is manufactured, which is a very expensive and time consuming task. Because of this, in order perform pre-silicon performance evaluation of a robotics SoC it is necessary to co-simulate the architectural behavior of hardware running a full robotics software stack together with a robotics environment modeling system dynamics and sensor data.
+
+
+\section{Project Description}
+ 
+ In this project we will develop co-simulation infrastructure to enable the design space exploration of robotics SoCs. As a driving application, we will look at autonomous quadrotor systems. This is because UAVs make for an interesting design point due to the interactions between latency, power, and weight constraints \cite{hadidi-designspace}, as well as the fact that the SoCs used onboard UAVs are comparable in scale to those previously designed at the ADEPT Lab at UC Berkeley.
+ 
+ In our project we plan on simulating a drone's hardware and software stack, along with a physical design to be used as a reference implementation. While we have not selected a physical drone at this point, we plan on implementing a design that implements the computers, actuators, and sensors as depicted in Figure~\ref{fig:dronelectronics}. In this configuration, we plan to have both the flight controller and companion computer on-board the drone, as this design point has more interesting constraints for the companion computer SoC. A possible candidate drone for this project is the \href{https://github.com/ramyadhadidi/ASPLOS21-Drone}{ASPLOS21-Drone}, an open source drone released with detailed assembly documentation \cite{hadidi-designspace}. In addition to the hardware, a preliminary draft of the software stack we plan on running on both the flight controller and companion computer is depicted in Figure~\ref{fig:dronesoftware}.
+ 
+ \begin{figure}[]
+    \centering
+    \includegraphics[width=\linewidth]{img/Hardware Architecture.png}
+    \caption{Electronics top level diagram for the proposed UAV.}
+    \label{fig:dronelectronics}
+\end{figure} 
+ 
+ Secondly, a key component of our work will be developing the co-simulation infrastructure for our UAV. Our work will build upon two existing simulators. For simulating UAV dynamics and visual rendering we plan on using \href{https://microsoft.github.io/AirSim/}{AirSim}, a simulator based on Unreal Engine developed by Microsoft \cite{shah2018airsim}. For cycle-accurate SoC simulation, we plan on using \href{https://fires.im}{FireSim}, an FPGA-accelerated RTL simulator developed at the ADEPT Lab at UC Berkeley \cite{firesim}. A top level diagram of our planned infrastructure is depicted in Figure~\ref{fig:simarchitecture}, with components that we expect to make major modifications to highlighted in red. These components mainly consist of the target-to-host bridges found in FireSim, which are responsible for the communication and synchronization between the host CPU managing the RTL simulation, and the target FPGA accelerating the simulation. Our modifications would need to synchronize the clock cycles elapsed in the RTL simulation with the amount of time simulated in AirSim, as well as to schedule the data transfers between AirSim and the SoC I/O modeled by FireSim. Before moving robotics software to the FireSim simulations, we will evaluate the RISC-V ports in a QEMU session as depicted in Figure~\ref{fig:qemu}.
+ 
+ The final component of our project will involve generating SoC instances on which we will evaluate our software stack. For our project, we will focus on evaluating custom hardware for an on-board companion computer. This is because the flight controller can be implemented using a low-power microcontroller, and provides no benefit from being accelerated as the frequency of the flight controller loop is bounded by the physical properties of an UAV rather than by the available compute capabilities \cite{hadidi-designspace}. On the other hand, accelerating high level control tasks in a HIL setup has been shown to improve quality-of-flight metrics in quadrotors, such as mission time and maximum velocity \cite{boroujerdian2018mavbench}. Because these high level control tasks run on the companion computer, we identified this unit for our design-space exploration. Developing new custom hardware accelerators is out of the scope of this project. However, we still plan on evaluating configurations of existing hardware, including the in-order Rocket CPU \cite{asanovic2016rocket}, the out-of-order superscalar BOOM CPU \cite{zhao2020sonicboom}, and Gemmini, a systolic array hardware generator \cite{genc2021gemmini}. We plan on generating hardware designs using these components using Chipyard, an SoC generator developed by the ADEPT Lab at UC Berkeley \cite{chipyard}. While discovering an optimal SoC configuration is out of the scope of this project, we plan on using the designs to evaluate the co-simulation infrastructure.
+ 
+ The project will incorporate the sensing and actuation through the use of the ASPLOS21-Drone, which will act as a physical reference design for the co-simulation infrastructure. However, sensing and actuation will also be explored through the simulated environment. Similarly, high level control and planning algorithms will be deployed on both the physical and simulated drones.
+
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\linewidth]{img/Flight Control.png}
+    \\[10pt]
+    \includegraphics[width=\linewidth]{img/High Level Control.png}    
+    \caption{An example software stack for both the flight controller and the companion computer.}
+    \label{fig:dronesoftware}
+\end{figure} 
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=0.8\linewidth]{img/AirSim-QEMU.png}
+    \caption{Top level architecture for evaluating ROS workloads on the RISC-V software stack.}
+    \label{fig:qemu}
+\end{figure} 
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\linewidth]{img/AirSim-FireSim.png}
+    \caption{Top level architecture for the proposed co-simulation architecture.}
+    \label{fig:simarchitecture}
+\end{figure} 
+ 
+ 
+
+
+%One of the challenges with developing hardware accelerators for robotics is evaluating the systems that incorporate them. As a first-order approximation is it is often sufficient to measure the latency of a particular workload running on a robot \cite{neuman2019benchmarking}. However, a system level evaluation has significant benefits. First, it can reveal bottlenecks that are not visible when evaluating a single workload, such as a bottleneck caused by resource contention between processes. This is especially important given that robotics workloads often consist of a complex system of computation nodes integrated with message passing \cite{robo-arch}. Secondly, system level evaluation is significant because of the closed-loop feedback that is inherent to robotic systems. An accelerated system can have different system-level behavior compared to a baseline system (such as a drone following more optimized trajectory due to a faster control loop.) This in turn can result in new data-dependent latencies affecting system-level performance\footnote{As an example, many Nonlinear Model Predictive Control (NMPC) solvers using an active-set method converge from a guess at each evaluation. This guess can warm-up based on previous evaluations, reducing the iterations needed to converge. However, if a system constraint suddenly changes, the guess is no longer valid, incurring a data-dependent latency cost.}. Furthermore, modeling these system level and data-dependent effects can have profound impact on system performance beyond faster update rates. Accelerating robotics workloads can lead to energy and time savings beyond the savings in compute due to more optimal system level behavior \cite{boroujerdian2018mavbench}.
+%
+%Many existing accelerators for robotics workloads have been targeted towards FPGA implementations \cite{fpgasurvey} rather than ASICs. This is typically done for two main reasons. First, FPGAs can implement fine-grained pipelines that are very efficient for a particular robot configuration and morphology \cite{neuman2021robomorphic}, while developing more generic robotics accelerators is a relatively novel field. However, a second reason is that prototyping FPGA-based accelerators is much more straightforward than with ASIC implementations, as an FPGA prototype can be directly inserted into a Hardware-in-the-Loop (HIL) setup for verification and benchmarking. On the other hand, an ASIC cannot be evaluated at a system level without co-simulating with a robotics simulator, as RTL simulation runs much slower than real-time.
+%
+%This paper presents novel infrastructure for co-simulating a robotics ASIC and a simulated environment. The infrastructure explored here concerns the implementation and evaluation of a synchronization system between the two environments. The paper examines key bottlenecks in co-simulation performance, and provides baseline measurements to compare against as more components of the infrastructure are developed. This work extends upon prior FPGA robotics co-simulation infrastructure in robotics by integrating an FPGA simulator rather than a prototype, and by supporting a full stack development environment. This work differs from prior HIL implementations as it does not use FPGA hardware to directly represent a device running robotics workloads; instead, the FPGA serves as an accelerator for RTL simulation of a ASIC that is in development. 
+%
+\section{Related Work} % Dima
+
+\subsection{Co-Simulation of Custom SoC Hardware}
+The co-simulation infrastructure presented in this paper builds upon prior projects, integrating various functionality to support a full stack robotics co-simulation infrastructure. To begin, this project heavily depends on the RTL simulation and synchronization functionality functionality provided by FireSim \cite{firesim}. FireSim already has built-in synchronization support, used to provide deterministic behavior both between FPGA targets, and FPGA targets and hosts. However, the functionality that this project needs to build on top of FireSim is the ability to have deterministic transactions that are initiated by the host, as typically FireSim bridges are configured to be deterministic with respect to transactions initiated by a target device. Additionally, while co-simulation projects have been built using FireSim, such as the Fromajo project, they differ in scope from this co-simulator. Fromajo is used to validate FireSim simulations against the Dromajo \cite{dromajo} architectural simulator \cite{zhao2020sonicboom}. Fromajo differs from this co-simulation infrastructure, however, as it is meant to be a platform for verification, and compares two instruction traces rather than integrating two simulators to support closed-loop feedback.
+
+\subsection{Simulation-Based Design Space Exploration of UAV Hardware}
+Several projects have used simulation methods to evaluate the impact of custom hardware on the flight performance of UAVs. One significant work presents MAVBench \cite{boroujerdian2018mavbench}, a closed-loop benchmarking suite based on AirSim. MAVBench profiled several UAV workloads such as scanning, package delivery, and 3D mapping in a HIL environment, running flight controller code on a Pixhawk board, and running high level control code on an NVIDIA Jetson TX2. While the benchmark did not explore custom robotics architectures, the authors determined that hardware accleration could affect quality-of-flight metrics such as maximum drone velocity, and total mission time. The hardware acceleration explored included sweeps of the SoCs' clock speed, as well as the number of cores allocated for robotics workloads. 
+
+
+\subsection{Closed-Loop Simulation of Custom Robotics Hardware and Systems}
+Another work that is relevant to this project is a prior co-simulation infrastructure developed at Link\"oping University \cite{acevedo2016fpga}. This project functions as a HIL setup, co-simulating an FPGA running robotics workloads with the Wolfram SystemModeler simulation environment \cite{rozhdestvensky2020description}. An FPGA and host computer are connected using a serial interface for synchronization and data transfer. This project differs from prior FPGA prototyping attempts as it synchronizes FPGA cycles to match SystemModeler's update rate, whereas prototyping projects run all systems directly in real-time. However, this project lacks several features compared to the proposed co-simulation infrastructure. First, rather than using a true cycle-exact ASIC simulation, the HIL co-simulator synchronizes against an FPGA implementation, which has different performance characteristics compared to an ASIC \cite{firesim}. Secondly, the HIL co-simulator currently only supports low-level hardware accelerators instead of an entire SoC supporting a full Linux stack. Having full-stack support is important for supporting and integrating projects that make use of the modern open-source robotics ecosystem. Finally, this paper's co-simulation infrastructure intends to support the ROS framework, allowing for a more standardized approach for integrating robotic software components.
+
+Finally, there have been prior attempts at co-simulating robotics simulations on top of the Gazebo/ROS ecosystem. One such project, CORNET, presents middleware that integrates a Gazebo simulation with a multiple  UAV flight controllers \cite{acharya2020cornet}. As in this project, CORNET uses a custom Gazebo plugin to perform synchronization with external simulators. However, CORNET is intended to provide co-simulation between Gazebo and a network simulator instead of cycle-exact hardware simulation, and so it has vastly different timing and performance requirements compared to this co-simulation infrastructure.
+
+Based on this review, there have been many projects that support elements of the infrastructure needed for closed-loop robotics ASIC co-simulation. However, this project is novel as it integrates all these aspects into one system.
+
+
+\section{Tasks, Milestones, and Assessment}
+This project will include a broad range of tasks, and relies heavily on infrastructure development. Accounting for this, we do not plan on accomplishing every task, given that there might be unexpected issues related with third-party components. We divided the tasks into Base, Target, and Reach, where we plan to complete base tasks by mid November, Target tasks by the project deadline, and Reach tasks if time permits. As this is a continuing research project, we plan on continuing this infrastructure development after the semester ends.\\
+
+We will assess the success of this project both on the milestones met, but also by the documentation and analysis of areas of improvement in the robotics, open source hardware, and electronic design automation communities that we encounter while working on this project.
+\subsection{Physical UAV Prototyping}
+\begin{itemize}
+    \item \textbf{(Base) Obtain FAA licenses and register drone:} Needed to legally pilot drones for recreational/research purposes. Can be filed online.
+    \item \textbf{(Base) Assemble ASPLOS21-Drone:} Purchase the parts listed in the BOM and follow the assembly instructions as in the ASPLOS21-Drone BuildGuide. Ensure that the drone functions using manual controls.
+    \item \textbf{(Base) Deploy flight controller:} Deploy ArduPilot onto the drone hardware, and verify that it can perform takeoff/landing as well as waypoint tracking.
+    \item \textbf{(Target) Develop basic high level control in ROS:} Deploy algorithms including mapping, localization, perception, and trajectory planning.
+    \item \textbf{(Reach) Evaluate UAV performance:} Verify that the system displays expected functionality, and note potential improvements.
+    \item \textbf{(Reach) Optimize high level control in ROS:} Make improvements to algorithms and scheduling to improve system-level performance.
+\end{itemize}
+
+
+
+
+
+
+\subsection{Porting ROS libraries to RISC-V}
+\begin{itemize}
+    \item \textbf{(Base) Port core ROS middleware:} Ensure that core ROS libraries are functional when compiled for RISC-V, demonstrating functionality of a ROS master as well as \texttt{roscpp} or \texttt{rospy}.
+    \item \textbf{(Target) Port integration-level libraries:} Ensure that standard or commonly used libraries such as \texttt{sensor\_msgs}, \texttt{geometry\_msgs} and \texttt{tf2} function properly.
+    \item \textbf{(Reach) Port application-level libraries:} Build and verify the functionality of libraries such as MoveIt, gmapping, and OpenCV.
+\end{itemize}
+
+\subsection{Developing Co-simulation Infrastructure}
+\begin{itemize}
+    \item \textbf{(Base) Interface with AirSim from QEMU session:} Transmit waypoints to AirSim from a RISC-V QEMU session, and receive sensor data through the AirSim APIs.
+    \item \textbf{(Target) Integrate ROS in QEMU with AirSim:} Run ROS code ported to RISC-V running high-level control, deploying setpoints to and reading sensor data from AirSim.
+    \item \textbf{(Target) Interface with AirSim from FireSim:} Transmit waypoints to and receive sensor data from AirSim from a simulated SoC within FireSim.
+    \item \textbf{(Reach) Integrate ROS on FireSim with AirSim:} Run ROS code on FireSim, communicating with AirSim.
+    \item \textbf{(Reach) Implement lockstep time synchronization between AirSim and FireSim:} Create a synchronizer bridge between FireSim and Airsim, using custom hardware to ensure lockstep synchronization between AirSim frames and FireSim cycles.
+    \item \textbf{(Reach) Implement deterministic data synchronization between Airsim and FireSim:} Implement a system for scheduling and releasing data transfers at deterministic time intervals between AirSim and FireSim, stalling simulation in case of unexpected network delays.
+\end{itemize}
+
+\subsection{Generating Robotics SoC Designs in Chipyard}
+\begin{itemize}
+    \item \textbf{(Base) Single Rocket Core:} Generate hardware using a single Rocket in-order CPU.
+    \item \textbf{(Target) Multi-core Rocket:} Generate hardware with 4-8 Rocket cores.
+    \item \textbf{(Target) Single BOOM Core:} Generate hardware using a BOOM out-of-order superscalar CPU.
+    \item \textbf{(Reach) Heterogeneous Rocket/BOOM SoC:} Generate design with both high performance BOOM cores and efficient Rocket cores.
+\end{itemize}
+
+\subsection{Documenting Challenges}
+\begin{itemize}
+    \item \textbf{Software Challenges:} Did any of the software/algorithms not work as expected? Are there any potential improvements?
+    \item \textbf{Software Infrastructure Challenges:} Are there any missing libraries or tools that prevent porting some software libraries to RISC-V? Are there deficiencies with simulators impacting integration for co-simulation?
+    \item \textbf{Hardware Challenges:} Do existing configurations face significant bottlenecks for the given workloads?
+    \item \textbf{Hardware Infrastructure Challenges:} Are there missing features/IP that impact the ability to port applications to RISC-V? Are there limitations of FPGA-accelerated simulations that impact co-simulation performance?
+    \item \textbf{Unexpected Issues:} Any other legal/social/mechanical/etc. concerns?
+\end{itemize}
+
+%Here, list out different major and minor tasks of the project. For example, 
+%
+%\begin{outline}[enumerate]
+%
+%\1 \textbf{Build the robot.} We will build the robot using . . .
+%\2 \textbf{Design the robot.} We will design the robot using . . .
+%\2 \textbf{Construct the robot.} We will construct the robot using . . .
+%
+%\1 \textbf{Code the robot.} We will program the robot using . . .
+%\2 \textbf{Develop node 1.} This node . . .
+%\2 \textbf{Develop node 2.} This node . . .
+%\2 \textbf{Develop node 3.} This node . . . 
+%
+%\end{outline}
+
+%\section{Milestones}
+
+%Here, list your milestones and when you plan to achieve them. You may either list them out (task by task, with corresponding dates) or create a \href{https://en.wikipedia.org/wiki/Gantt_chart}{Gantt chart}.
+
+%\section{Assessment}
+
+%How will you test or assess your project? What constitutes a success? What are some realistic goals? What are some ``reach'' goals?
+
+\section{Team Member Roles}
+
+\subsection{Dima Nikiforov} Dima will be in charge of tasks involving porting software libraries to RISC-V, developing FireSim to support co-simulation, and generating hardware designs, given their experience working with similar infrastructures and environments at the ADEPT Lab.
+\subsection{Chris Dong} Chris will be developing the software infrastructure via ROS and AirSim, setting up AirSim in AWS server and running built-in simple flight controller, along with developing and testing high level algorithms both in simulation and on the real drone. 
+
+\subsection{Collaboration} 
+While we plan on collaborating throughout the project, we will make sure to only do drone hardware prototyping and testing when both group members are present in order to follow lab safety protocols. We will also collaborate heavily to ensure that we can successfully integrate the infrastructure components that we develop.
+
+%Here, delineate each team member's roles, how they will contribute, and their relevant background. Multiple people can of course work on multiple/overlapping tasks.
+%
+%\begin{itemize}
+%\item Susan will be in charge of tasks 2(a) and 2(c). Her background is in artificial intelligence and human-robot interaction. She has taken CS 101, EE 101, and she can program any robot known to man.
+%\item Riri will be in charge of tasks 1(a) and 1(b). Her background is in mechanical engineering, control theory, and assistive technologies. She has taken ME 101, ME 102, and she can build any robot known to man.
+%\item Roy will be in charge of task 2(b). As an actual robot, he is uniquely qualified to build and program robotic systems.
+%\end{itemize}
+
+\section{Bill of Materials}
+
+\subsection{Use of Lab Resources}
+
+We do not plan on using any of the EECS 206A lab resources for this project.
+
+%Please include all lab resources you plan to use, so we can ensure that all teams have sufficient access to hardware. Please indicate which robot end effectors / grippers you plan to use, if applicable.
+
+%\vspace{1em}
+%
+%\begin{tabular}[h]{l|l}
+%\textbf{Item} & \textbf{Quantity} \\
+%\hline
+%Sawyer (w/ parallel gripper) & 2 \\
+%TurtleBot & 6 \\ % sorry only fictional characters can use all of our hardware, we won't give you this many
+%\end{tabular}
+
+\subsection{Other Robotic Platforms}
+
+We plan on using the ASPLOS21-Drone to perform physical prototyping for this project.
+
+%You may already have access to other robots, via a lab you work in (or a quadcopter hobby). If you plan to use them, please list them here. (If you plan to use your lab's hardware for the project, make sure to clear it with the PI first!)
+
+%\vspace{1em}
+%
+%\begin{tabular}[h]{l|l|l}
+%\textbf{Item} & \textbf{Quantity} & \textbf{Owner/Location} \\
+%\hline
+%Ironheart suit & 1 & Riri \\
+%Marvin & 1 & Heart of Gold\\ 
+%\end{tabular}
+
+\begin{figure*}[hb]
+    \centering
+    \includegraphics[trim=0  110 0 50,width=\linewidth]{img/206A.pdf}
+    \caption{Budget for assembling a drone for the project.}
+    \label{fig:dronebudget}
+\end{figure*}
+
+\subsection{Items for Purchase}
+This project will involve purchasing components for physical prototyping, as well as paying for the use of AWS infrastructure for software development and running GPU and FPGA accelerated simulations. The bill of materials for the drone is shown in Figure~\ref{fig:dronebudget}. Additionally, we plan on using the following AWS EC2 instances using on-demand pricing: \texttt{c5.4xlarge} (Managing FireSim simulations, general software development), \texttt{g4dn.2xlarge} (Running GPU-accelerated drone simulations using AirSim), and \texttt{f1.2xlarge} (Running FPGA-accelerated RTL simulations in FireSim.) Funding for purchasing components will be provided by grants through the ADEPT Lab.
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{robomorphic}
+
+% \end{multicols}
+\end{document}
